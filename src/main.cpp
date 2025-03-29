@@ -52,6 +52,9 @@ MPU6050 accelgyro;
 
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
+int16_t prev_ax, prev_ay, prev_az;
+int16_t prev_gx, prev_gy, prev_gz;
+const int threshold = 5000;
 
 
 
@@ -118,6 +121,7 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
 }
 
+
 void loop() {
     // read raw accel/gyro measurements from device
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
@@ -127,14 +131,41 @@ void loop() {
     //accelgyro.getRotation(&gx, &gy, &gz);
 
     #ifdef OUTPUT_READABLE_ACCELGYRO
-        // display tab-separated accel/gyro x/y/z values
-        Serial.print("a/g:\t");
-        Serial.print(ax); Serial.print("\t");
-        Serial.print(ay); Serial.print("\t");
-        Serial.print(az); Serial.print("\t");
-        Serial.print(gx); Serial.print("\t");
-        Serial.print(gy); Serial.print("\t");
-        Serial.println(gz);
+    // Count movement difference
+    int delta_ax = abs(ax - prev_ax);
+    int delta_ay = abs(ay - prev_ay);
+    int delta_az = abs(az - prev_az);
+    int delta_gx = abs(gx - prev_gx);
+    int delta_gy = abs(gy - prev_gy);
+    int delta_gz = abs(gz - prev_gz);
+
+    // Tarkistetaan, ylittääkö muutos kynnysarvon
+    if (delta_ax > threshold || delta_ay > threshold || delta_az > threshold ||
+        delta_gx > threshold || delta_gy > threshold || delta_gz > threshold) {
+
+        Serial.println("Liike havaittu!");
+        Serial.print("delta_ax: "); Serial.print(delta_ax);
+        Serial.print(" delta_ay: "); Serial.print(delta_ay);
+        Serial.print(" delta_az: "); Serial.print(delta_az);
+        Serial.print(" delta_gx: "); Serial.print(delta_gx);
+        Serial.print(" delta_gy: "); Serial.print(delta_gy);
+        Serial.print(" delta_gz: "); Serial.println(delta_gz);
+        Serial.println("  /\\_/\\");
+        Serial.println(" ( o o )");
+        Serial.println(" ==_Y_==");
+        Serial.println("   `-'");
+        }
+
+    // Päivitetään edelliset arvot seuraavaa vertailua varten
+    prev_ax = ax;
+    prev_ay = ay;
+    prev_az = az;
+    prev_gx = gx;
+    prev_gy = gy;
+    prev_gz = gz;
+
+    delay(200); // Pieni viive, ettei tulosteta liikaa
+
     #endif
 
     #ifdef OUTPUT_BINARY_ACCELGYRO
