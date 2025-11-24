@@ -34,7 +34,7 @@ THE SOFTWARE.
 #include "I2Cdev.h"
 #include "MPU6050.h"
 #include <Adafruit_BusIO_Register.h>
-#include <Adafruit_Sensor.h>
+#include <Adafruit_Sensor.h>  
 
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
@@ -126,6 +126,7 @@ void loop() {
     //accelgyro.getAcceleration(&ax, &ay, &az);
     //accelgyro.getRotation(&gx, &gy, &gz);
 
+    /*
     #ifdef OUTPUT_READABLE_ACCELGYRO
         // display tab-separated accel/gyro x/y/z values
         Serial.print("a/g:\t");
@@ -135,7 +136,14 @@ void loop() {
         Serial.print(gx); Serial.print("\t");
         Serial.print(gy); Serial.print("\t");
         Serial.println(gz);
+    
     #endif
+    */
+
+    if (gy > 10000) {
+        Serial.println("isku");
+    }
+
 
     #ifdef OUTPUT_BINARY_ACCELGYRO
         Serial.write((uint8_t)(ax >> 8)); Serial.write((uint8_t)(ax & 0xFF));
@@ -150,4 +158,4 @@ void loop() {
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
     delay(100);
-}
+} 
