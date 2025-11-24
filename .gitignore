@@ -42,3 +42,34 @@ env/
 *.tmp
 *.cache
 
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+.pio/build/
+.pio/libdeps/
+.pio/packages/
+.pio/.cache/
+
+# VSCode
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# MacOS
+.DS_Store
+
+# Python virtualenv / caches
+venv/
+__pycache__/
+*.pyc
+
+# Arduino build artifacts (jos käytät Arduino-lähteitä)
+*.elf
+*.bin
+*.hex
+
+# Backups
+*.swp
+*.swo
+*~
