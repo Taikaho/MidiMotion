@@ -79,5 +79,3 @@ The project serves as a continuously evolving learning platform rather than a fi
 
 This project is based on the I2Cdev / MPU6050 library by Jeff Rowberg (MIT license):  
 https://github.com/jrowberg/i2cdevlib
-
-All modifications and additional logic are implemented as part of the MidiMotion project.
