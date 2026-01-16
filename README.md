@@ -79,3 +79,6 @@ This project is based on the I2Cdev / MPU6050 library by Jeff Rowberg (MIT licen
 https://github.com/jrowberg/i2cdevlib
 
 All modifications and additional logic are implemented as part of the MidiMotion project.
+
+- **Enclosure:** 3D-printed prototype case (.3mf)
+![MidiMotion prototype](images/midimotion_prototype.jpg)
