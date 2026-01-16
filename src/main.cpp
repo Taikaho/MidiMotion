@@ -38,7 +38,7 @@ unsigned long lastBlinkMs = 0;
 bool ledState = false;
 
 static void printConnectionStatus(bool ok) {
-  static bool lastOk = true; // so we print only on change
+  static bool lastOk = true; 
   if (ok != lastOk) {
     Serial.println(ok ? "MPU6050 connection OK" : "MPU6050 connection LOST");
     lastOk = ok;
@@ -48,7 +48,7 @@ static void printConnectionStatus(bool ok) {
 void setup() {
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
   Wire.begin();
-  Wire.setClock(100000); // slower I2C = more stable on protoboards
+  Wire.setClock(100000);
 #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
   Fastwire::setup(400, true);
 #endif
@@ -69,7 +69,7 @@ void setup() {
 void loop() {
   unsigned long now = millis();
 
-  // Optional: detect if sensor disappears (e.g. bad jumper wires)
+  // I did this test because of bad wiring connections.
   bool ok = accelgyro.testConnection();
   printConnectionStatus(ok);
 
