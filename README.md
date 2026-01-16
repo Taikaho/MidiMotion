@@ -34,7 +34,7 @@ At the current stage, the project focuses on:
 - Simple hit detection implemented using a gyroscope threshold with cooldown (debounce)
 - Serial output used for debugging and motion validation
 
-![MidiMotion prototype](images/midimotion prototype.jpeg)
+![MidiMotion prototype](images/midimotion%20prototype.jpeg)
 
 ---
 
