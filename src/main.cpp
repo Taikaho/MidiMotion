@@ -24,12 +24,20 @@ int16_t ax, ay, az;
 int16_t gx, gy, gz;
 
 // ---- Hit detection settings ----
-const int16_t HIT_THRESHOLD = 10000;
-const unsigned long HIT_COOLDOWN_MS = 200;
+const int16_t HIT_THRESHOLD = 10000;   // min gyro magnitude to start detection
+const int16_t HIT_MAX       = 30000;   // gyro magnitude that maps to velocity 127 (calibrate!)
+const unsigned long HIT_COOLDOWN_MS  = 200;
+const unsigned long PEAK_WINDOW_MS   = 40;    // ms to search for peak after threshold crossing
+
+// ---- Hit state machine ----
+enum HitState { IDLE, PEAK_DETECT };
+HitState hitState       = IDLE;
+unsigned long peakWindowStart = 0;
+int16_t peakSample      = 0;
 
 // ---- Timing ----
-const unsigned long SAMPLE_DELAY_MS = 10;     
-const unsigned long LED_BLINK_MS     = 200;   
+const unsigned long SAMPLE_DELAY_MS = 10;
+const unsigned long LED_BLINK_MS     = 200;
 
 unsigned long lastHitMs   = 0;
 unsigned long lastBlinkMs = 0;
@@ -76,10 +84,26 @@ void loop() {
   if (ok) {
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
-    // Simple hit detection using gyro Y-axis threshold + cooldown
-    if (gy > HIT_THRESHOLD && (now - lastHitMs) > HIT_COOLDOWN_MS) {
-      Serial.println("isku");
-      lastHitMs = now;
+    // Hit detection with peak-window velocity measurement
+    int16_t gyAbs = abs(gy);
+
+    if (hitState == IDLE) {
+      if (gyAbs > HIT_THRESHOLD && (now - lastHitMs) > HIT_COOLDOWN_MS) {
+        hitState        = PEAK_DETECT;
+        peakWindowStart = now;
+        peakSample      = gyAbs;
+      }
+    } else { // PEAK_DETECT
+      if (gyAbs > peakSample) peakSample = gyAbs;
+
+      if (now - peakWindowStart >= PEAK_WINDOW_MS) {
+        int velocity = map(constrain(peakSample, HIT_THRESHOLD, HIT_MAX),
+                           HIT_THRESHOLD, HIT_MAX, 1, 127);
+        Serial.print("isku velocity=");
+        Serial.println(velocity);
+        lastHitMs = now;
+        hitState  = IDLE;
+      }
     }
   }
 
