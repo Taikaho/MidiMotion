@@ -3,7 +3,7 @@
 MidiMotion is an experimental embedded project that explores using motion sensor data to trigger MIDI events.  
 The goal is to build a wrist-mounted motion controller for music production, where physical gestures (hits, swings) are translated into MIDI notes and velocities.
 
-The project is developed as a hands-on learning platform for embedded C/C++, sensor data processing, and real-time event detection.
+The project is developed as a hands-on learning platform for embedded C/C++, Python, sensor data processing, and real-time event detection.
 
 ---
 
