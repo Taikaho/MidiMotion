@@ -34,6 +34,8 @@ At the current stage, the project focuses on:
 - Simple hit detection implemented using a gyroscope threshold with cooldown (debounce)
 - Serial output used for debugging and motion validation
 
+![MidiMotion prototype](images/midimotion%20prototype.jpeg)
+
 ---
 
 ## Planned Next Steps
@@ -77,8 +79,3 @@ The project serves as a continuously evolving learning platform rather than a fi
 
 This project is based on the I2Cdev / MPU6050 library by Jeff Rowberg (MIT license):  
 https://github.com/jrowberg/i2cdevlib
-
-All modifications and additional logic are implemented as part of the MidiMotion project.
-
-- **Enclosure:** 3D-printed prototype case (.3mf)
-![MidiMotion prototype](images/midimotion_prototype.jpg)
