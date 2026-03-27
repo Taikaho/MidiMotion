@@ -1,22 +1,31 @@
 /*
  * MidiMotion - Motion sensor percussion instrument by Toni Taikina-aho (in progress)
- * 
- * 
+ *
  * Based on Jeff Rowberg's I2Cdev MPU6050 example (MIT license)
  * Original source: https://github.com/jrowberg/i2cdevlib
  *
  * Modifications:
  * - Added motion threshold detection ("hit") with cooldown (debounce)
- * - Serial output for sensor validation
+ * - BLE MIDI output: sends Note On/Off on channel 10 (drums)
  */
 
 #include <Arduino.h>
 #include "I2Cdev.h"
 #include "MPU6050.h"
+#include <BLEMIDI_Transport.h>
+#include <hardware/BLEMIDI_ESP32.h>
 
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
   #include <Wire.h>
 #endif
+
+// ---- BLE MIDI ----
+BLEMIDI_CREATE_INSTANCE("MidiMotion", MIDI)
+
+// MIDI drum map (General MIDI ch 10)
+static const uint8_t MIDI_CH      = 10;
+static const uint8_t MIDI_NOTE    = 38;  // Acoustic Snare — change to taste
+static const uint8_t NOTE_OFF_VEL = 0;
 
 // ---- MPU6050 ----
 MPU6050 accelgyro;
@@ -61,12 +70,17 @@ void setup() {
   Fastwire::setup(400, true);
 #endif
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(200);
 
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
+  // BLE MIDI
+  MIDI.begin(MIDI_CHANNEL_OMNI);
+  Serial.println("BLE MIDI started — device name: MidiMotion");
+
+  // MPU6050
   Serial.println("Initializing MPU6050...");
   accelgyro.initialize();
 
@@ -76,6 +90,9 @@ void setup() {
 
 void loop() {
   unsigned long now = millis();
+
+  // Keep BLE stack running
+  MIDI.read();
 
   // Optional: detect if sensor disappears (e.g. bad jumper wires)
   bool ok = accelgyro.testConnection();
@@ -99,8 +116,15 @@ void loop() {
       if (now - peakWindowStart >= PEAK_WINDOW_MS) {
         int velocity = map(constrain(peakSample, HIT_THRESHOLD, HIT_MAX),
                            HIT_THRESHOLD, HIT_MAX, 1, 127);
+
+        // Send BLE MIDI Note On, then Note Off
+        MIDI.sendNoteOn(MIDI_NOTE, (uint8_t)velocity, MIDI_CH);
+        delay(20);
+        MIDI.sendNoteOff(MIDI_NOTE, NOTE_OFF_VEL, MIDI_CH);
+
         Serial.print("hit velocity=");
         Serial.println(velocity);
+
         lastHitMs = now;
         hitState  = IDLE;
       }
