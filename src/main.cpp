@@ -99,7 +99,7 @@ void loop() {
       if (now - peakWindowStart >= PEAK_WINDOW_MS) {
         int velocity = map(constrain(peakSample, HIT_THRESHOLD, HIT_MAX),
                            HIT_THRESHOLD, HIT_MAX, 1, 127);
-        Serial.print("isku velocity=");
+        Serial.print("hit velocity=");
         Serial.println(velocity);
         lastHitMs = now;
         hitState  = IDLE;
